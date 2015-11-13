@@ -1,14 +1,16 @@
-DEX2JAR_DIR=./tmp
+DEX2JAR_DIR="./dex2jar"
 
 install_dex2jar()
 {
+    mkdir $DEX2JAR_DIR
     cd $DEX2JAR_DIR
 
     # Download the latest version of dex2jar
     wget http://sourceforge.net/projects/dex2jar/files/dex2jar-2.0.zip
     
     unzip dex2jar-*
-    chmod +x dex2jar-*/*
+    chmod +x dex2jar-2.0/*
+    DEX2JAR_PROG=$DEX2JAR_DIR/dex2jar-*/d2j-dex2jar.sh
 }
 
 install_apktools()
@@ -34,7 +36,8 @@ install_framework_res()
     wget http://qc2.androidfilehost.com/dl/iA7HYVmHYlaeIBJzKk9yTw/1447564320/23212708291677144/framework-res.apk;
 
     # If download is not successful from above link, get it from below
-    if [ $? != 0 ]:
+    if [ $? != 0 ]
+    then
 	wget http://en.osdn.jp/projects/sfnet_hdtechvideo/downloads/Other/4.1.2/framework-res.apk
     fi
 
@@ -59,10 +62,27 @@ extract_source()
     # step1 : extract the apk into app_src directory
     app=$1
     cp $app ./app/
-
     $DEX2JAR_PROG ./app/$app -o ./app_src/
+
+    # step2 : Decode XML files
+    apktool d ./app/$app
 }
 
 
 
+apkdecompiler()
+{
+    if [ $# -eq 0 ]
+    then
+	echo "Please supply <.apk> to decode"
+	exit -1
+    fi
 
+    echo "Decompiling $1..."
+
+    install_utils;
+    extract_source $1;
+
+    echo "Decoded $1 into ./app_src/"
+    exit 0;
+}
