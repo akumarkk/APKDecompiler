@@ -63,7 +63,7 @@ install_utils()
 
 extract_source()
 {
-    cd $INSTALL_DIR;
+    cd $BASEDIR;
     echo "Entered into $BASEDIR..."
     mkdir ./app
     mkdir ./app_src
